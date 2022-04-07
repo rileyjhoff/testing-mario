@@ -3,8 +3,10 @@ import kaboom from './kaboom/dist/kaboom.mjs';
 
 kaboom({
     global: true,
-    fullscreen: true,
-    scale: 1, 
+    width: 600,
+    height: 300,
+    // fullscreen: true,
+    scale: 2, 
     debug: true,
     background: [0, 0, 0, 1],
 });
@@ -50,7 +52,6 @@ scene('game', () => {
 
     onKeyDown('right', () => {
         mario.move(marioSpeed, 0);
-        console.log(screenPos);
     });
 
     onKeyPress('space', () => {
@@ -150,7 +151,7 @@ scene('game', () => {
     });
 
     mario.onUpdate(() => {
-        camPos(mario.pos);
+        camPos(mario.pos.x, 180);
     });
 });
 
