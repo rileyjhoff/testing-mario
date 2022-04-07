@@ -27,19 +27,21 @@ loadSprite('pipe', 'assets/pipe.png');
 
 
 
-scene('game', ({ score, count }) => {
+scene('game', () => {
     layers(['bg', 'obj', 'ui'], 'obj');
 
     const mario = add([
-        sprite('mario'), solid(), area(),
+        sprite('mario'), 
+        solid(), 
+        area(),
         pos(30, 0),
         body(),
-        origin('bot')
+        origin('bot'),
+        'mario'
     ]);
 
     const marioSpeed = 120;
-    const marioJumpHeight = 500;
-    const coinScore = 200;
+    const marioJumpHeight = 600;
     const mushroomMove = 20;
 
     onKeyDown('left', () => {
@@ -48,70 +50,72 @@ scene('game', ({ score, count }) => {
 
     onKeyDown('right', () => {
         mario.move(marioSpeed, 0);
+        console.log(screenPos);
     });
 
     onKeyPress('space', () => {
         if (mario.isGrounded()) {
             mario.jump(marioJumpHeight);
-            // play('jump');
         }
     });
 
-    mario.on('headbump', (obj) => {
-        if (obj.is('coin-surprise')) {
+    // const coinSurprise = add([
+    //     sprite('surprise-box'), 
+    //     solid(), 
+    //     area(), 
+    //     'coin-surprise'
+    // ]);
+
+    // const mushroomSurprise = add([
+    //     sprite('surprise-box'), 
+    //     solid(), 
+    //     area(), 
+    //     'mushroom-surprise'
+    // ]);
+
+    // const brick = add([
+    //     sprite('brick'), 
+    //     area(), 
+    //     solid()
+    // ]);
+
+    mario.onCollide('coin-surprise', (obj) => {
+        if (mario.pos.y === obj.pos.y + 40) {
+            destroy(obj);
             gameLevel.spawn('*', obj.gridPos.sub(0, 1));
             gameLevel.spawn('+', obj.gridPos.sub(0, 0));
-            destroy(obj);
         }
-        if (obj.is('mushroom-surprise')) {
+    });
+
+    mario.onCollide('mushroom-surprise', (obj) => {
+        if (mario.pos.y === obj.pos.y + 40) {
+            destroy(obj);
             gameLevel.spawn('@', obj.gridPos.sub(0, 1));
             gameLevel.spawn('+', obj.gridPos.sub(0, 0));
+        }
+    });
+
+    mario.onCollide('coin', (obj) => {
+        destroy(obj);
+    });
+
+    onUpdate('evil-mushroom', (obj) => {
+        obj.move(-mushroomMove, 0);
+    });
+
+    mario.onCollide('mushroom', (obj) => {
+        destroy(obj);
+    });
+
+    mario.onCollide('evil-mushroom', (obj) => {
+        if (mario.pos.y === obj.pos.y) {
             destroy(obj);
         }
     });
 
-    on('evil-mushroom', () => {
-        move((-1, 0), mushroomMove);
+    mario.onCollide('coin', (obj) => {
+        destroy(obj);
     });
-
-    on('evil-mushroom', () => {
-        move((-1, 0), mushroomMove);
-    });
-
-    mario.onCollide('mushroom', (e) => {
-        destroy(e);
-        mario.biggify(10);
-    });
-
-    mario.onCollide('coin', (e) => {
-        destroy(e);
-        scoreLabel.value += coinScore;
-        scoreLabel.text = scoreLabel.value;
-        console.log(score);
-    });
-
-    // play('theme');
-
-    const username = add([
-        text('MARIO'),
-        pos(30, 6),
-    ]);
-    const scoreLabel = add([
-        text(score),
-        pos(60, 20),
-        layer('ui'),
-        {
-            value: score
-        }
-    ]);
-    const coinCount = add([
-        text(sprite('coin') + 'x' + count),
-        pos(100, 20),
-        layer('ui'),
-        {
-            value: count
-        }
-    ]);
 
     const gameLevel = addLevel([
         '                                     ',
@@ -122,10 +126,10 @@ scene('game', ({ score, count }) => {
         '                 ****                ',
         '                                     ',
         '                                     ',
-        '                 ++++                ',
+        '                 ====                ',
         '                                     ',
         '                                     ',
-        '     **  +$+#+                       ',
+        '     **   =$=#=                      ',
         '                                     ',
         '                         ?           ',
         '                    ^  ^             ',
@@ -135,8 +139,8 @@ scene('game', ({ score, count }) => {
         width: 20,
         height: 20,
         // define what each symbol means, by a function returning a component list (what will be passed to add())
-        '=': () => [sprite('brick'), area(), solid()],
-        '*': () => [sprite('coin'), 'coin'],
+        '=': () => [sprite('brick'), area(), solid(), 'brick'],
+        '*': () => [sprite('coin'), area(), 'coin'],
         '$': () => [sprite('surprise-box'), solid(), area(), 'coin-surprise'],
         '#': () => [sprite('surprise-box'), solid(), area(), 'mushroom-surprise'],
         '^': () => [sprite('evil-mushroom'), solid(), area(), 'evil-mushroom', body()],
@@ -150,4 +154,4 @@ scene('game', ({ score, count }) => {
     });
 });
 
-go('game', { score: 0, count: 0 });
+go('game');
