@@ -4,7 +4,7 @@ import kaboom from '../node_modules/kaboom/dist/kaboom.mjs';
 kaboom({
     global: true,
     fullscreen: true,
-    scale: 2, 
+    scale: 1, 
     debug: true,
     background: [0, 0, 0, 1],
 });
@@ -21,33 +21,14 @@ loadSprite('pipe', 'assets/pipe.png');
 
 //sounds to play during gameplay
 // loadRoot('https://dazzling-vacherin-8cb912.netlify.app/assets/');
-loadRoot('http://localhost:5501/assets/');
-loadSound('jump', 'marioJump.mp3');
-loadSound('theme', 'mainTheme.mp3');
+// loadRoot('http://localhost:5501/assets/');
+// loadSound('jump', 'marioJump.mp3');
+// loadSound('theme', 'mainTheme.mp3');
 
 
 
 scene('game', ({ score, count }) => {
     layers(['bg', 'obj', 'ui'], 'obj');
-
-    const map = [
-        '                                     ',
-        '                                     ',
-        '        ***                          ',
-        '                                     ',
-        '                                     ',
-        '                 ****                ',
-        '                                     ',
-        '                                     ',
-        '                 ++++                ',
-        '                                     ',
-        '                                     ',
-        '     **  +%+#+                       ',
-        '                                     ',
-        '                         ?           ',
-        '                    ^  ^             ',
-        '===========================    ======',
-    ];
 
     const player = add([
         sprite('mario'), solid(), area(),
@@ -57,7 +38,7 @@ scene('game', ({ score, count }) => {
     ]);
 
     const marioSpeed = 120;
-    const marioJumpHeight = 400;
+    const marioJumpHeight = 500;
     const coinScore = 200;
     const mushroomMove = 20;
 
@@ -70,9 +51,9 @@ scene('game', ({ score, count }) => {
     });
 
     onKeyPress('space', () => {
-        if (player.grounded()) {
+        if (player.isGrounded()) {
             player.jump(marioJumpHeight);
-            play('jump');
+            // play('jump');
         }
     });
 
@@ -89,38 +70,25 @@ scene('game', ({ score, count }) => {
         }
     });
 
-    action('mushroom', (e) => {
-        e.move(mushroomMove, 0);
+    on('evil-mushroom', () => {
+        move((-1, 0), mushroomMove);
     });
 
-    action('evil-mushroom', (e) => {
-        e.move(-mushroomMove, 0);
+    on('evil-mushroom', () => {
+        move((-1, 0), mushroomMove);
     });
 
-    // player.collides('mushroom', (e) => {
-    //     destroy(e);
-    //     player.biggify(10);
-    // });
+    player.onCollide('mushroom', (e) => {
+        destroy(e);
+        player.biggify(10);
+    });
 
-    player.collides('coin', (e) => {
+    player.onCollide('coin', (e) => {
         destroy(e);
         scoreLabel.value += coinScore;
         scoreLabel.text = scoreLabel.value;
         console.log(score);
     });
-
-    const levelConfig = {
-        width: 20,
-        height: 20,
-        '=': [sprite('brick'), solid(), area()],
-        '*': [sprite('coin'), 'coin'],
-        '%': [sprite('surprise-box'), solid(), area(), 'coin-surprise'],
-        '#': [sprite('surprise-box'), solid(), area(), 'mushroom-surprise'],
-        '^': [sprite('evil-mushroom'), solid(), area(), 'evil-mushroom', body()],
-        '?': [sprite('pipe'), solid(), area()],
-        '+': [sprite('block'), solid(), area()],
-        '@': [sprite('mushroom'), solid(), area(), 'mushroom', body()],
-    };
 
     // play('theme');
 
@@ -146,36 +114,38 @@ scene('game', ({ score, count }) => {
     ]);
 
     const gameLevel = addLevel([
-        "                          $",
-        "                          $",
-        "           $$         =   $",
-        "  %      ====         =   $",
-        "                      =    ",
-        "       ^^      = >    =   &",
-        "===========================",
+        '                                     ',
+        '                                     ',
+        '        ***                          ',
+        '                                     ',
+        '                                     ',
+        '                 ****                ',
+        '                                     ',
+        '                                     ',
+        '                 ++++                ',
+        '                                     ',
+        '                                     ',
+        '     **  +$+#+                       ',
+        '                                     ',
+        '                         ?           ',
+        '                    ^  ^             ',
+        '===========================    ======',
     ], {
         // define the size of each block
-        width: 32,
-        height: 32,
+        width: 20,
+        height: 20,
         // define what each symbol means, by a function returning a component list (what will be passed to add())
-        "=": () => [
-            sprite('block'),
-            area(),
-            solid(),
-        ],
-        "$": () => [
-            sprite('coin'),
-            area(),
-            pos(0, -9),
-        ],
-        "^": () => [
-            sprite('mushroom'),
-            area(),
-            "danger",
-        ],
+        '=': () => [sprite('brick'), area(), solid()],
+        '*': () => [sprite('coin'), 'coin'],
+        '$': () => [sprite('surprise-box'), solid(), area(), 'coin-surprise'],
+        '#': () => [sprite('surprise-box'), solid(), area(), 'mushroom-surprise'],
+        '^': () => [sprite('evil-mushroom'), solid(), area(), 'evil-mushroom', body()],
+        '?': () => [sprite('pipe'), solid(), area()],
+        '+': () => [sprite('block'), solid(), area()],
+        '@': () => [sprite('mushroom'), solid(), area(), 'mushroom', body()],
     });
 
-    player.action(() => {
+    player.onUpdate(() => {
         camPos(player.pos);
     });
 });
