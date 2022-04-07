@@ -44,7 +44,9 @@ scene('game', () => {
 
     const marioSpeed = 120;
     const marioJumpHeight = 600;
-    const mushroomMove = 20;
+    const mushroomMove = 40;
+    const evilMushroomMove = 20;
+
 
     onKeyDown('left', () => {
         mario.move(-marioSpeed, 0);
@@ -93,6 +95,9 @@ scene('game', () => {
             destroy(obj);
             gameLevel.spawn('@', obj.gridPos.sub(0, 1));
             gameLevel.spawn('+', obj.gridPos.sub(0, 0));
+            onUpdate('mushroom', (obj) => {
+                obj.move(mushroomMove, 0);
+            });
         }
     });
 
@@ -104,16 +109,19 @@ scene('game', () => {
                 const marioDistance = mushroomSurprise.pos.x - mario.pos.x;
                 if (mario.pos.y === mushroomSurprise.pos.y + 40 && marioDistance > -20 && marioDistance < 0) {
                     destroy(mushroomSurprise);
-                    gameLevel.spawn('@', obj.gridPos.sub(-1, 1));
-                    gameLevel.spawn('+', obj.gridPos.sub(-1, 0));
+                    gameLevel.spawn('@', mushroomSurprise.gridPos.sub(0, 1));
+                    gameLevel.spawn('+', mushroomSurprise.gridPos.sub(0, 0));
+                    onUpdate('mushroom', (obj) => {
+                        obj.move(mushroomMove, 0);
+                    });
                 }
             }
             for (let coinSurprise of coinSurprises) {
                 const marioDistance = coinSurprise.pos.x - mario.pos.x;
                 if (mario.pos.y === coinSurprise.pos.y + 40 && marioDistance > -20 && marioDistance < 0) {
                     destroy(coinSurprise);
-                    gameLevel.spawn('*', obj.gridPos.sub(-1, 1));
-                    gameLevel.spawn('+', obj.gridPos.sub(-1, 0));
+                    gameLevel.spawn('*', coinSurprise.gridPos.sub(0, 1));
+                    gameLevel.spawn('+', coinSurprise.gridPos.sub(0, 0));
                 }
             }
         }
@@ -124,7 +132,7 @@ scene('game', () => {
     });
 
     onUpdate('evil-mushroom', (obj) => {
-        obj.move(-mushroomMove, 0);
+        obj.move(-evilMushroomMove, 0);
     });
 
     mario.onCollide('mushroom', (obj) => {
@@ -135,10 +143,6 @@ scene('game', () => {
         if (mario.pos.y === obj.pos.y) {
             destroy(obj);
         }
-    });
-
-    mario.onCollide('coin', (obj) => {
-        destroy(obj);
     });
 
     const gameLevel = addLevel([
