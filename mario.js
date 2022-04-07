@@ -1,4 +1,4 @@
-import kaboom from '../node_modules/kaboom/dist/kaboom.mjs';
+import kaboom from './kaboom/dist/kaboom.mjs';
 
 
 kaboom({
@@ -30,7 +30,7 @@ loadSprite('pipe', 'assets/pipe.png');
 scene('game', ({ score, count }) => {
     layers(['bg', 'obj', 'ui'], 'obj');
 
-    const player = add([
+    const mario = add([
         sprite('mario'), solid(), area(),
         pos(30, 0),
         body(),
@@ -43,21 +43,21 @@ scene('game', ({ score, count }) => {
     const mushroomMove = 20;
 
     onKeyDown('left', () => {
-        player.move(-marioSpeed, 0);
+        mario.move(-marioSpeed, 0);
     });
 
     onKeyDown('right', () => {
-        player.move(marioSpeed, 0);
+        mario.move(marioSpeed, 0);
     });
 
     onKeyPress('space', () => {
-        if (player.isGrounded()) {
-            player.jump(marioJumpHeight);
+        if (mario.isGrounded()) {
+            mario.jump(marioJumpHeight);
             // play('jump');
         }
     });
 
-    player.on('headbump', (obj) => {
+    mario.on('headbump', (obj) => {
         if (obj.is('coin-surprise')) {
             gameLevel.spawn('*', obj.gridPos.sub(0, 1));
             gameLevel.spawn('+', obj.gridPos.sub(0, 0));
@@ -78,12 +78,12 @@ scene('game', ({ score, count }) => {
         move((-1, 0), mushroomMove);
     });
 
-    player.onCollide('mushroom', (e) => {
+    mario.onCollide('mushroom', (e) => {
         destroy(e);
-        player.biggify(10);
+        mario.biggify(10);
     });
 
-    player.onCollide('coin', (e) => {
+    mario.onCollide('coin', (e) => {
         destroy(e);
         scoreLabel.value += coinScore;
         scoreLabel.text = scoreLabel.value;
@@ -145,8 +145,8 @@ scene('game', ({ score, count }) => {
         '@': () => [sprite('mushroom'), solid(), area(), 'mushroom', body()],
     });
 
-    player.onUpdate(() => {
-        camPos(player.pos);
+    mario.onUpdate(() => {
+        camPos(mario.pos);
     });
 });
 
