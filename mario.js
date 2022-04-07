@@ -3,9 +3,9 @@ import kaboom from './kaboom/dist/kaboom.mjs';
 
 kaboom({
     global: true,
-    width: 600,
-    height: 300,
-    // fullscreen: true,
+    // width: 600,
+    // height: 300,
+    fullscreen: true,
     scale: 2, 
     debug: true,
     background: [0, 0, 0, 1],
@@ -96,6 +96,29 @@ scene('game', () => {
         }
     });
 
+    mario.onCollide('brick', (obj) => {
+        if (mario.pos.y === obj.pos.y + 40) {
+            const mushroomSurprises = get('mushroom-surprise');
+            const coinSurprises = get('coin-surprise');
+            for (let mushroomSurprise of mushroomSurprises) {
+                const marioDistance = mushroomSurprise.pos.x - mario.pos.x;
+                if (mario.pos.y === mushroomSurprise.pos.y + 40 && marioDistance > -20 && marioDistance < 0) {
+                    destroy(mushroomSurprise);
+                    gameLevel.spawn('@', obj.gridPos.sub(-1, 1));
+                    gameLevel.spawn('+', obj.gridPos.sub(-1, 0));
+                }
+            }
+            for (let coinSurprise of coinSurprises) {
+                const marioDistance = coinSurprise.pos.x - mario.pos.x;
+                if (mario.pos.y === coinSurprise.pos.y + 40 && marioDistance > -20 && marioDistance < 0) {
+                    destroy(coinSurprise);
+                    gameLevel.spawn('*', obj.gridPos.sub(-1, 1));
+                    gameLevel.spawn('+', obj.gridPos.sub(-1, 0));
+                }
+            }
+        }
+    });
+
     mario.onCollide('coin', (obj) => {
         destroy(obj);
     });
@@ -151,7 +174,8 @@ scene('game', () => {
     });
 
     mario.onUpdate(() => {
-        camPos(mario.pos.x, 180);
+        // camPos(mario.pos.x, 180);
+        camPos(mario.pos);
     });
 });
 
