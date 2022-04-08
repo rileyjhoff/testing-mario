@@ -152,6 +152,14 @@ scene('game', () => {
         // }
     });
 
+    mario.onCollide('pipe', (obj) => {
+        if (mario.pos.y === obj.pos.y) {
+            wait(0.2, () => {
+                mario.moveTo(660, 300);
+            });
+        } 
+    });
+
     const gameLevel = addLevel([
         '                                     ',
         '                                     ',
@@ -179,7 +187,7 @@ scene('game', () => {
         '$': () => [sprite('surprise-box'), solid(), area(), 'coin-surprise'],
         '#': () => [sprite('surprise-box'), solid(), area(), 'mushroom-surprise'],
         '^': () => [sprite('evil-mushroom'), solid(), area(), 'evil-mushroom', body()],
-        '?': () => [sprite('pipe'), solid(), area()],
+        '?': () => [sprite('pipe'), solid(), area(), 'pipe'],
         '+': () => [sprite('block'), solid(), area()],
         '@': () => [sprite('mushroom'), solid(), area(), 'mushroom', body()],
     });
