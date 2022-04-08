@@ -177,10 +177,51 @@ scene('game', () => {
         '@': () => [sprite('mushroom'), solid(), area(), 'mushroom', body()],
     });
 
+    let timeLeft = 6000;
+
+    const timer = add([
+        
+        text(timeLeft / 60, {
+            size: 18,
+            width: 320, 
+            font: 'sinko', 
+        }),
+        pos(80, 30),
+        layer('ui'),
+        fixed(),
+        {
+            value: time
+        },
+        'timer'        
+    ]);
+
+    onUpdate('timer', (obj) => {
+        timeLeft--; 
+        if ((timeLeft / 60) % 1 === 0) {
+            destroy(obj);
+            const timer = add([
+        
+                text(timeLeft / 60, {
+                    size: 18,
+                    width: 320, 
+                    font: 'sinko', 
+                }),
+                pos(80, 30),
+                layer('ui'),
+                fixed(),
+                {
+                    value: time
+                },
+                'timer'        
+            ]);
+        }
+    });
+
     mario.onUpdate(() => {
         // camPos(mario.pos.x, 180);
         camPos(mario.pos);
     });
+
 });
 
 go('game');
