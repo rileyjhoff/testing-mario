@@ -48,7 +48,7 @@ scene('start', () => {
         go('game');
     });
     
-    startScreen.onUpdate(() => {
+    onUpdate(() => {
         camPos(startScreen.pos.x, (startScreen.pos.y + 50));
     });
 });
@@ -223,7 +223,7 @@ scene('game', () => {
         }
     });
 
-    mario.onUpdate(() => {
+    onUpdate(() => {
         // camPos(mario.pos.x, 180);
         camPos(mario.pos);
     });
