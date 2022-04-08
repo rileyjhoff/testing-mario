@@ -194,7 +194,7 @@ scene('game', () => {
 
     let timeLeft = 6000;
 
-    const timer = add([
+    add([
         
         text(timeLeft / 60, {
             size: 18,
@@ -210,25 +210,12 @@ scene('game', () => {
         'timer'        
     ]);
 
+    let timer = get('timer');
+
     onUpdate('timer', (obj) => {
         timeLeft--; 
         if ((timeLeft / 60) % 1 === 0) {
-            destroy(obj);
-            const timer = add([
-        
-                text(timeLeft / 60, {
-                    size: 18,
-                    width: 320, 
-                    font: 'sinko', 
-                }),
-                pos(80, 30),
-                layer('ui'),
-                fixed(),
-                {
-                    value: time
-                },
-                'timer'        
-            ]);
+            timer[0].text = timeLeft / 60;
         }
     });
 
