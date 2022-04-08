@@ -146,9 +146,10 @@ scene('game', () => {
     mario.onCollide('evil-mushroom', (obj) => {
         if (mario.pos.y === obj.pos.y) {
             destroy(obj);
-        } else {
-            go('start');
-        }
+        } 
+        // else {
+        //     go('start');
+        // }
     });
 
     const gameLevel = addLevel([
@@ -230,4 +231,4 @@ scene('game', () => {
 
 });
 
-go('start');
+go('game');
