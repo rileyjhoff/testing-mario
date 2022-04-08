@@ -27,7 +27,31 @@ loadSprite('pipe', 'assets/pipe.png');
 // loadSound('jump', 'marioJump.mp3');
 // loadSound('theme', 'mainTheme.mp3');
 
+loadSprite('start-screen', './assets/start-screen.png');
 
+scene('start', () => {
+    
+    const startScreen = add([
+        sprite('start-screen'),
+        origin('center'), 
+        pos(0, 0), 
+        scale(0.65)
+    ]);
+    add([
+        text('Press Spacebar To Start'),
+        origin('center'), 
+        pos(0, 125), 
+        scale(0.25)
+    ]);
+
+    onKeyDown('space', () => {
+        go('game');
+    });
+    
+    startScreen.onUpdate(() => {
+        camPos(startScreen.pos.x, (startScreen.pos.y + 50));
+    });
+});
 
 scene('game', () => {
     layers(['bg', 'obj', 'ui'], 'obj');
@@ -61,26 +85,6 @@ scene('game', () => {
             mario.jump(marioJumpHeight);
         }
     });
-
-    // const coinSurprise = add([
-    //     sprite('surprise-box'), 
-    //     solid(), 
-    //     area(), 
-    //     'coin-surprise'
-    // ]);
-
-    // const mushroomSurprise = add([
-    //     sprite('surprise-box'), 
-    //     solid(), 
-    //     area(), 
-    //     'mushroom-surprise'
-    // ]);
-
-    // const brick = add([
-    //     sprite('brick'), 
-    //     area(), 
-    //     solid()
-    // ]);
 
     mario.onCollide('coin-surprise', (obj) => {
         if (mario.pos.y === obj.pos.y + 40) {
@@ -142,6 +146,8 @@ scene('game', () => {
     mario.onCollide('evil-mushroom', (obj) => {
         if (mario.pos.y === obj.pos.y) {
             destroy(obj);
+        } else {
+            go('start');
         }
     });
 
@@ -224,4 +230,4 @@ scene('game', () => {
 
 });
 
-go('game');
+go('start');
